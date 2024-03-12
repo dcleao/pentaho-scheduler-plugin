@@ -35,6 +35,15 @@ public class GetTreeOptions {
   private GenericFilePath expandedPath;
 
   /**
+   * Enum to represent the three filters for 
+   */
+  public enum TreeFilter {
+    FOLDERS, FILES, ALL;
+  }
+
+  private TreeFilter treeFilter = TreeFilter.ALL;
+
+  /**
    * Gets the base path of the subtree to retrieve.
    * <p>
    * When the base path is {@code null}, the whole tree, for the context of the operation, is retrieved.
@@ -148,6 +157,22 @@ public class GetTreeOptions {
     this.expandedPath = expandedPath;
   }
 
+  /**
+   * Sets the {@link TreeFilter} treeFilter
+   * @param treeFilter
+   */
+  public void setTreeFilter( TreeFilter treeFilter ) {
+    this.treeFilter = treeFilter;
+  }
+
+  /**
+   * Returns the treeFilter
+   * @return the {@link TreeFilter} treeFilter
+   */
+  public TreeFilter getTreeFilter() {
+    return treeFilter;
+  }
+
   @Override
   public boolean equals( Object other ) {
     if ( this == other ) {
@@ -161,11 +186,12 @@ public class GetTreeOptions {
     GetTreeOptions that = (GetTreeOptions) other;
     return Objects.equals( basePath, that.basePath )
       && Objects.equals( maxDepth, that.maxDepth )
-      && Objects.equals( expandedPath, that.expandedPath );
+      && Objects.equals( expandedPath, that.expandedPath )
+      && Objects.equals( treeFilter, that.treeFilter );
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash( basePath, maxDepth, expandedPath );
+    return Objects.hash( basePath, maxDepth, expandedPath, treeFilter );
   }
 }

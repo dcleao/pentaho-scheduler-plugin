@@ -63,15 +63,28 @@ public class GenericFileResource {
     @ResponseCode( code = 500, condition = "Operation failed" )
   } )
   public IGenericFileTree getFolderTree( @QueryParam( "depth" ) Integer maxDepth,
-                                         @QueryParam( "expandedPath" ) String expandedPath ) {
+                                         @QueryParam( "expandedPath" ) String expandedPath,
+                                         @QueryParam( "filter" ) String treeFilterString ) {
     try {
       GetTreeOptions options = new GetTreeOptions();
+      //TODO THESE LINES ARE DUPLICATED, COULD BE PUT IN HELPER METHOD
       options.setMaxDepth( maxDepth );
+
+      if ( treeFilterString == null || treeFilterString.length() == 0 ) {
+        options.setTreeFilter( GetTreeOptions.TreeFilter.ALL );
+      } else {
+        try {
+          options.setTreeFilter( GetTreeOptions.TreeFilter.valueOf( treeFilterString ) );
+        } catch ( IllegalArgumentException e ) {
+          throw new WebApplicationException( e, Response.Status.BAD_REQUEST );
+        }
+      }
 
       // Path in query parameter is not specially encoded.
       options.setExpandedPath( expandedPath );
 
       return genericFileService.getFolderTree( options );
+      //TODO END DUPLICATE
     } catch ( AccessControlException e ) {
       throw new WebApplicationException( e, Response.Status.FORBIDDEN );
     } catch ( OperationFailedException e ) {
@@ -91,11 +104,22 @@ public class GenericFileResource {
   } )
   public IGenericFileTree getFolderSubtree( @NonNull @PathParam( "path" ) String basePath,
                                             @QueryParam( "depth" ) Integer maxDepth,
-                                            @QueryParam( "expandedPath" ) String expandedPath ) {
+                                            @QueryParam( "expandedPath" ) String expandedPath,
+                                            @QueryParam( "filter" ) String treeFilterString ) {
     try {
       GetTreeOptions options = new GetTreeOptions();
       options.setBasePath( decodePath( basePath ) );
       options.setMaxDepth( maxDepth );
+
+      if ( treeFilterString == null || treeFilterString.length() == 0 ) {
+        options.setTreeFilter( GetTreeOptions.TreeFilter.ALL );
+      } else {
+        try {
+          options.setTreeFilter( GetTreeOptions.TreeFilter.valueOf( treeFilterString ) );
+        } catch ( IllegalArgumentException e ) {
+          throw new WebApplicationException( e, Response.Status.BAD_REQUEST );
+        }
+      }
 
       // Path in query parameter is not specially encoded.
       options.setExpandedPath( expandedPath );

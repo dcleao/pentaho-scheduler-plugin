@@ -114,10 +114,24 @@ public class RepositoryFileProvider extends BaseGenericFileProvider<RepositoryFi
 
     FileService fileService = new FileService();
 
+    String filter;
+
+    switch ( options.getTreeFilter() ) {
+      case FOLDERS:
+        filter = "*|FOLDERS";
+        break;
+      case FILES:
+        filter = "*|FILES";
+        break;
+      case ALL:
+      default:
+        filter = "*";
+    }
+
     RepositoryFileTreeDto nativeTree = fileService.doGetTree(
       encodeRepositoryPath( basePath.toString() ),
       options.getMaxDepth(),
-      "*|FOLDERS",
+      filter,
       true,
       false,
       false );
