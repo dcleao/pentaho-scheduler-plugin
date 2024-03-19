@@ -61,10 +61,10 @@ public class DefaultGenericFileService implements IGenericFileService {
     this.fileProviders = new ArrayList<>( fileProviders );
   }
 
-  public void clearFolderCache() {
+  public void clearFileTreeCache() {
     for ( IGenericFileProvider<?> fileProvider : fileProviders ) {
       try {
-        fileProvider.clearFolderCache();
+        fileProvider.clearFileTreeCache();
       } catch ( OperationFailedException e ) {
         // Clear as many as possible. Still, log each failure.
         e.printStackTrace();
@@ -73,12 +73,12 @@ public class DefaultGenericFileService implements IGenericFileService {
   }
 
   @NonNull
-  public IGenericFileTree getFolderTree( @NonNull GetTreeOptions options ) throws OperationFailedException {
+  public IGenericFileTree getFileTree( @NonNull GetTreeOptions options ) throws OperationFailedException {
 
     Objects.requireNonNull( options );
 
     if ( isSingleProviderMode() ) {
-      return fileProviders.get( 0 ).getFolderTree( options );
+      return fileProviders.get( 0 ).getFileTree( options );
     }
 
     return options.getBasePath() == null
@@ -100,7 +100,7 @@ public class DefaultGenericFileService implements IGenericFileService {
     OperationFailedException firstProviderException = null;
     for ( IGenericFileProvider<?> fileProvider : fileProviders ) {
       try {
-        rootTree.addChild( fileProvider.getFolderTree( options ) );
+        rootTree.addChild( fileProvider.getFileTree( options ) );
       } catch ( OperationFailedException e ) {
         if ( firstProviderException == null ) {
           firstProviderException = e;
@@ -137,7 +137,7 @@ public class DefaultGenericFileService implements IGenericFileService {
     // In multi-provider mode, and fetching a subtree based on basePath, the parent path is the parent path of basePath.
     return getOwnerFileProvider( basePath )
       .orElseThrow( () -> new NotFoundException( String.format( "Base path not found '%s'.", basePath ) ) )
-      .getFolderTree( options );
+      .getFileTree( options );
   }
 
   public boolean doesFileExist( @NonNull GenericFilePath path ) throws OperationFailedException {

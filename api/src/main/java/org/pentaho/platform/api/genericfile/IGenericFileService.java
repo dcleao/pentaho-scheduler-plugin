@@ -36,15 +36,15 @@ public interface IGenericFileService {
    * Clears the cache of folder trees, for all generic file providers, for the current user session.
    *
    * @throws OperationFailedException If the operation fails for some (checked) reason.
-   * @see #getFolderTree(GetTreeOptions)
+   * @see #getFileTree(GetTreeOptions)
    * @see #createFolder(GenericFilePath)
    */
-  void clearFolderCache() throws OperationFailedException;
+  void clearFileTreeCache() throws OperationFailedException;
 
   /**
    * Gets a tree of folders.
    * <p>
-   * The results of this method are cached. To ensure fresh results, the {@link #clearFolderCache()} should be called
+   * The results of this method are cached. To ensure fresh results, the {@link #clearFileTreeCache()} should be called
    * beforehand.
    *
    * @param options The operation options. These control, for example, whether to return the full tree,
@@ -62,7 +62,7 @@ public interface IGenericFileService {
    * @throws OperationFailedException If the operation fails for any other (checked) reason.
    */
   @NonNull
-  IGenericFileTree getFolderTree( @NonNull GetTreeOptions options ) throws OperationFailedException;
+  IGenericFileTree getFileTree( @NonNull GetTreeOptions options ) throws OperationFailedException;
 
   /**
    * Checks whether a generic file exists, given its path.
@@ -107,7 +107,7 @@ public interface IGenericFileService {
    * @throws AccessControlException   If the user of the current session does not have permission to create the folder.
    * @throws InvalidPathException     If the folder's path is not valid.
    * @throws OperationFailedException If the operation fails for any other (checked) reason.
-   * @see #clearFolderCache()
+   * @see #clearFileTreeCache()
    */
   boolean createFolder( @NonNull GenericFilePath path ) throws OperationFailedException;
 
@@ -128,7 +128,7 @@ public interface IGenericFileService {
    * @throws AccessControlException   If the user of the current session does not have permission to create the folder.
    * @throws InvalidPathException     If the folder's path is not valid.
    * @throws OperationFailedException If the operation fails for any other (checked) reason.
-   * @see #clearFolderCache()
+   * @see #clearFileTreeCache()
    */
   default boolean createFolder( @Nullable String path ) throws OperationFailedException {
     return createFolder( GenericFilePath.parseRequired( path ) );

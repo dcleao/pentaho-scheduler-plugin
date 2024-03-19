@@ -41,12 +41,12 @@ class IGenericFileServiceTest {
 
   static class GenericFileServiceForTesting implements IGenericFileService {
     @Override
-    public void clearFolderCache() {
+    public void clearFileTreeCache() {
     }
 
     @NonNull
     @Override
-    public IGenericFileTree getFolderTree( @NonNull GetTreeOptions options ) {
+    public IGenericFileTree getFileTree( @NonNull GetTreeOptions options ) {
       throw new UnsupportedOperationException();
     }
 

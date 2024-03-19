@@ -54,7 +54,7 @@ public class GenericFileResource {
   }
 
   @GET
-  @Path( "/folders/tree" )
+  @Path( "/files/tree" )
   @Produces( { MediaType.APPLICATION_JSON } )
   @StatusCodes( {
     @ResponseCode( code = 200, condition = "Operation successful" ),
@@ -62,9 +62,9 @@ public class GenericFileResource {
     @ResponseCode( code = 403, condition = "Access forbidden" ),
     @ResponseCode( code = 500, condition = "Operation failed" )
   } )
-  public IGenericFileTree getFolderTree( @QueryParam( "depth" ) Integer maxDepth,
-                                         @QueryParam( "expandedPath" ) String expandedPath,
-                                         @QueryParam( "filter" ) String treeFilterString ) {
+  public IGenericFileTree getFileTree( @QueryParam( "depth" ) Integer maxDepth,
+                                       @QueryParam( "expandedPath" ) String expandedPath,
+                                       @QueryParam( "filter" ) String treeFilterString ) {
     try {
       GetTreeOptions options = new GetTreeOptions();
       //TODO THESE LINES ARE DUPLICATED, COULD BE PUT IN HELPER METHOD
@@ -83,7 +83,7 @@ public class GenericFileResource {
       // Path in query parameter is not specially encoded.
       options.setExpandedPath( expandedPath );
 
-      return genericFileService.getFolderTree( options );
+      return genericFileService.getFileTree( options );
       //TODO END DUPLICATE
     } catch ( AccessControlException e ) {
       throw new WebApplicationException( e, Response.Status.FORBIDDEN );
@@ -93,7 +93,7 @@ public class GenericFileResource {
   }
 
   @GET
-  @Path( "/folders/{path : .+}/tree" )
+  @Path( "/files/{path : .+}/tree" )
   @Produces( { MediaType.APPLICATION_JSON } )
   @StatusCodes( {
     @ResponseCode( code = 200, condition = "Operation successful" ),
@@ -102,10 +102,10 @@ public class GenericFileResource {
     @ResponseCode( code = 403, condition = "Access forbidden" ),
     @ResponseCode( code = 500, condition = "Operation failed" )
   } )
-  public IGenericFileTree getFolderSubtree( @NonNull @PathParam( "path" ) String basePath,
-                                            @QueryParam( "depth" ) Integer maxDepth,
-                                            @QueryParam( "expandedPath" ) String expandedPath,
-                                            @QueryParam( "filter" ) String treeFilterString ) {
+  public IGenericFileTree getFileSubtree( @NonNull @PathParam( "path" ) String basePath,
+                                          @QueryParam( "depth" ) Integer maxDepth,
+                                          @QueryParam( "expandedPath" ) String expandedPath,
+                                          @QueryParam( "filter" ) String treeFilterString ) {
     try {
       GetTreeOptions options = new GetTreeOptions();
       options.setBasePath( decodePath( basePath ) );
@@ -124,7 +124,7 @@ public class GenericFileResource {
       // Path in query parameter is not specially encoded.
       options.setExpandedPath( expandedPath );
 
-      return genericFileService.getFolderTree( options );
+      return genericFileService.getFileTree( options );
     } catch ( AccessControlException e ) {
       throw new WebApplicationException( e, Response.Status.FORBIDDEN );
     } catch ( InvalidPathException e ) {
@@ -135,7 +135,7 @@ public class GenericFileResource {
   }
 
   @DELETE
-  @Path( "/folders/tree/cache" )
+  @Path( "/files/tree/cache" )
   @StatusCodes( {
     @ResponseCode( code = 204, condition = "Cache was cleared successfully" ),
     @ResponseCode( code = 401, condition = "Authentication required" ),
@@ -144,7 +144,7 @@ public class GenericFileResource {
   } )
   public void clearCache() {
     try {
-      genericFileService.clearFolderCache();
+      genericFileService.clearFileTreeCache();
     } catch ( AccessControlException e ) {
       throw new WebApplicationException( e, Response.Status.FORBIDDEN );
     } catch ( OperationFailedException e ) {
