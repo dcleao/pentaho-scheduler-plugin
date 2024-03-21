@@ -54,7 +54,7 @@ public class GenericFileResource {
   }
 
   @GET
-  @Path( "/files/tree" )
+  @Path( "/tree" )
   @Produces( { MediaType.APPLICATION_JSON } )
   @StatusCodes( {
     @ResponseCode( code = 200, condition = "Operation successful" ),
@@ -93,7 +93,7 @@ public class GenericFileResource {
   }
 
   @GET
-  @Path( "/files/{path : .+}/tree" )
+  @Path( "/{path : .+}/tree" )
   @Produces( { MediaType.APPLICATION_JSON } )
   @StatusCodes( {
     @ResponseCode( code = 200, condition = "Operation successful" ),
@@ -135,7 +135,7 @@ public class GenericFileResource {
   }
 
   @DELETE
-  @Path( "/files/tree/cache" )
+  @Path( "/tree/cache" )
   @StatusCodes( {
     @ResponseCode( code = 204, condition = "Cache was cleared successfully" ),
     @ResponseCode( code = 401, condition = "Authentication required" ),
