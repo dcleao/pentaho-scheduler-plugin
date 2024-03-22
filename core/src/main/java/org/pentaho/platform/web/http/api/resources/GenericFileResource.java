@@ -21,6 +21,7 @@
 package org.pentaho.platform.web.http.api.resources;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.pentaho.platform.api.genericfile.GetTreeOptions;
@@ -64,27 +65,9 @@ public class GenericFileResource {
   } )
   public IGenericFileTree getFileTree( @QueryParam( "depth" ) Integer maxDepth,
                                        @QueryParam( "expandedPath" ) String expandedPath,
-                                       @QueryParam( "filter" ) String treeFilterString ) {
+                                       @QueryParam( "filter" ) String filterString ) {
     try {
-      GetTreeOptions options = new GetTreeOptions();
-      //TODO THESE LINES ARE DUPLICATED, COULD BE PUT IN HELPER METHOD
-      options.setMaxDepth( maxDepth );
-
-      if ( treeFilterString == null || treeFilterString.length() == 0 ) {
-        options.setTreeFilter( GetTreeOptions.TreeFilter.ALL );
-      } else {
-        try {
-          options.setTreeFilter( GetTreeOptions.TreeFilter.valueOf( treeFilterString ) );
-        } catch ( IllegalArgumentException e ) {
-          throw new WebApplicationException( e, Response.Status.BAD_REQUEST );
-        }
-      }
-
-      // Path in query parameter is not specially encoded.
-      options.setExpandedPath( expandedPath );
-
-      return genericFileService.getFileTree( options );
-      //TODO END DUPLICATE
+      return getTreeWithOptions( null, maxDepth, expandedPath, filterString );
     } catch ( AccessControlException e ) {
       throw new WebApplicationException( e, Response.Status.FORBIDDEN );
     } catch ( OperationFailedException e ) {
@@ -105,26 +88,9 @@ public class GenericFileResource {
   public IGenericFileTree getFileSubtree( @NonNull @PathParam( "path" ) String basePath,
                                           @QueryParam( "depth" ) Integer maxDepth,
                                           @QueryParam( "expandedPath" ) String expandedPath,
-                                          @QueryParam( "filter" ) String treeFilterString ) {
+                                          @QueryParam( "filter" ) String filterString ) {
     try {
-      GetTreeOptions options = new GetTreeOptions();
-      options.setBasePath( decodePath( basePath ) );
-      options.setMaxDepth( maxDepth );
-
-      if ( treeFilterString == null || treeFilterString.length() == 0 ) {
-        options.setTreeFilter( GetTreeOptions.TreeFilter.ALL );
-      } else {
-        try {
-          options.setTreeFilter( GetTreeOptions.TreeFilter.valueOf( treeFilterString ) );
-        } catch ( IllegalArgumentException e ) {
-          throw new WebApplicationException( e, Response.Status.BAD_REQUEST );
-        }
-      }
-
-      // Path in query parameter is not specially encoded.
-      options.setExpandedPath( expandedPath );
-
-      return genericFileService.getFileTree( options );
+      return getTreeWithOptions( basePath, maxDepth, expandedPath, filterString );
     } catch ( AccessControlException e ) {
       throw new WebApplicationException( e, Response.Status.FORBIDDEN );
     } catch ( InvalidPathException e ) {
@@ -132,6 +98,30 @@ public class GenericFileResource {
     } catch ( OperationFailedException e ) {
       throw new WebApplicationException( e, Response.Status.INTERNAL_SERVER_ERROR );
     }
+  }
+
+  private IGenericFileTree getTreeWithOptions( @Nullable String basePath,
+                                               @NonNull Integer maxDepth,
+                                               @NonNull String expandedPath,
+                                               @NonNull String filterString )
+    throws OperationFailedException {
+    GetTreeOptions options = new GetTreeOptions();
+
+    if ( basePath != null ) {
+      options.setBasePath( decodePath( basePath ) );
+    }
+    options.setMaxDepth( maxDepth );
+
+    try {
+      options.setFilter( filterString );
+    } catch ( IllegalArgumentException e ) {
+      throw new WebApplicationException( e, Response.Status.BAD_REQUEST );
+    }
+
+    // Path in query parameter is not specially encoded.
+    options.setExpandedPath( expandedPath );
+
+    return genericFileService.getTree( options );
   }
 
   @DELETE
@@ -144,7 +134,7 @@ public class GenericFileResource {
   } )
   public void clearCache() {
     try {
-      genericFileService.clearFileTreeCache();
+      genericFileService.clearTreeCache();
     } catch ( AccessControlException e ) {
       throw new WebApplicationException( e, Response.Status.FORBIDDEN );
     } catch ( OperationFailedException e ) {

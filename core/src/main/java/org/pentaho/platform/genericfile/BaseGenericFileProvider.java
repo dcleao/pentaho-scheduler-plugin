@@ -48,7 +48,7 @@ public abstract class BaseGenericFileProvider<T extends IGenericFile> implements
 
     boolean folderCreated = createFolderCore( path );
     if ( folderCreated ) {
-      clearFileTreeCache();
+      clearTreeCache();
     }
 
     return folderCreated;
@@ -58,7 +58,7 @@ public abstract class BaseGenericFileProvider<T extends IGenericFile> implements
 
   @Override
   @NonNull
-  public IGenericFileTree getFileTree( @NonNull GetTreeOptions options ) throws OperationFailedException {
+  public IGenericFileTree getTree( @NonNull GetTreeOptions options ) throws OperationFailedException {
 
     Objects.requireNonNull( options );
 
@@ -126,7 +126,7 @@ public abstract class BaseGenericFileProvider<T extends IGenericFile> implements
         options.setBasePath( path );
         options.setMaxDepth( 1 );
 
-        BaseGenericFileTree treeWithChildren = (BaseGenericFileTree) getFileTree( options );
+        BaseGenericFileTree treeWithChildren = (BaseGenericFileTree) getTree( options );
 
         // Steal the children.
         childTrees = treeWithChildren.getChildren();
@@ -156,7 +156,7 @@ public abstract class BaseGenericFileProvider<T extends IGenericFile> implements
   // endregion
 
   @Override
-  public void clearFileTreeCache() {
+  public void clearTreeCache() {
     cachedTrees.clear();
   }
 }
