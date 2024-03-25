@@ -35,7 +35,7 @@ public class BaseGenericFileProviderTest {
 
     @NonNull
     @Override
-    protected BaseGenericFileTree getFileTreeCore( @NonNull GetTreeOptions options ) {
+    protected BaseGenericFileTree getTreeCore( @NonNull GetTreeOptions options ) {
       throw new UnsupportedOperationException();
     }
 
@@ -68,9 +68,9 @@ public class BaseGenericFileProviderTest {
     }
   }
 
-  // region getFolderTree
+  // region getTree
   @Test
-  public void testGetFolderTree() {
+  public void testGetTree() {
 
   }
   // endregion

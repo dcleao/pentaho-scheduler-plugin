@@ -65,7 +65,7 @@ public abstract class BaseGenericFileProvider<T extends IGenericFile> implements
     // (Sonar) Cannot use computeIfAbsent because a checked exception needs to be thrown from the mapping function.
     BaseGenericFileTree tree = cachedTrees.get( options );
     if ( tree == null ) {
-      tree = getFileTreeCore( options );
+      tree = getTreeCore( options );
 
       processExpandedPath( tree, options );
 
@@ -75,6 +75,11 @@ public abstract class BaseGenericFileProvider<T extends IGenericFile> implements
     return tree;
   }
 
+  @NonNull
+  protected abstract BaseGenericFileTree getTreeCore( @NonNull GetTreeOptions options )
+    throws OperationFailedException;
+
+  // region Expanded Path
   private void processExpandedPath( @NonNull BaseGenericFileTree tree, @NonNull GetTreeOptions options )
     throws OperationFailedException {
 
@@ -91,11 +96,6 @@ public abstract class BaseGenericFileProvider<T extends IGenericFile> implements
     }
   }
 
-  @NonNull
-  protected abstract BaseGenericFileTree getFileTreeCore( @NonNull GetTreeOptions options )
-    throws OperationFailedException;
-
-  // region expandPathInTree
   protected void expandPathInTree( @NonNull BaseGenericFileTree tree,
                                    @NonNull GenericFilePath basePath,
                                    int maxDepth,
